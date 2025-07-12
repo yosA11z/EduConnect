@@ -312,7 +312,8 @@
 
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Recordatorios Guardados</h3>
                 <div id="lista-recordatorios" class="space-y-4">
-                    </div>
+                    <!-- Aquí se cargarán los recordatorios desde Supabase -->
+                </div>
             </section>
 
             <section id="notas-estudiantes-section" class="main-section p-8 rounded-xl shadow-xl bg-white hidden">
@@ -379,7 +380,20 @@
             // Reemplaza 'TU_URL_DE_PROYECTO_SUPABASE' y 'TU_CLAVE_ANON_SUPABASE' con tus credenciales reales.
             const SUPABASE_URL = 'https://aamvnpvfzmnrrfurovuv.supabase.co'; // <-- ¡IMPORTANTE! Reemplaza con tu URL
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbXZucHZmem1ucnJmdXJvdnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNjI2NDUsImV4cCI6MjA2MzYzODY0NX0._OigReH-zPR9AfGE5L9Rw9H71AnxQzH7T5k93mjPj5E'; // <-- ¡IMPORTANTE! Reemplaza con tu clave ANÓNIMA
-            const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            let supabase; // Declara la variable para Supabase
+            try {
+                // Añadimos console.log para verificar los valores antes de la inicialización
+                console.log('Intentando inicializar Supabase con URL:', SUPABASE_URL);
+                console.log('Intentando inicializar Supabase con KEY (primeros 5 chars):', SUPABASE_ANON_KEY.substring(0, 5) + '...');
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase inicializado con éxito.');
+            } catch (e) {
+                console.error('ERROR: Fallo al inicializar Supabase. Verifica tu URL y clave.', e);
+                alert('Hubo un problema al conectar con la base de datos. Por favor, verifica la configuración.');
+                // Si Supabase no se inicializa, las funciones que dependen de él no funcionarán.
+                // Podrías deshabilitar los formularios o botones si esto es crítico.
+            }
 
 
             // --- Mostrar nombre del profesor ---
@@ -418,28 +432,48 @@
                     const targetId = element.dataset.target; // Get the ID of the target section
                     const targetSection = document.getElementById(targetId);
 
+                    console.log('Clic en elemento de navegación:', element.textContent.trim());
+                    console.log('ID de sección objetivo:', targetId);
+
                     if (targetSection) {
+                        console.log('Sección objetivo encontrada:', targetId);
                         hideAllSections(); // Hide all sections
                         deactivateAllLinks(); // Deactivate all sidebar links
 
                         targetSection.classList.add('active'); // Show the target section
                         targetSection.style.display = 'block'; // Asegurar que se muestre
+                        console.log('Sección ahora visible:', targetId);
 
                         // Find and activate the corresponding sidebar link
                         sidebarLinks.forEach(sidebarLink => {
                             if (sidebarLink.dataset.target === targetId) {
                                 sidebarLink.classList.add('active');
+                                console.log('Enlace de sidebar activado:', sidebarLink.textContent.trim());
                             }
                         });
 
                         // Si la sección de recordatorios se activa, cargar los recordatorios
                         if (targetId === 'recordatorios-section') {
-                            mostrarRecordatorios(); // Llama a la función actualizada
+                            console.log('Cargando recordatorios...');
+                            // Solo llama a mostrarRecordatorios si Supabase está inicializado
+                            if (supabase) {
+                                mostrarRecordatorios(); 
+                            } else {
+                                console.error('Supabase no está inicializado, no se pueden cargar los recordatorios.');
+                            }
                         }
                         // Si la sección de notas de estudiantes se activa, cargar los datos de edición de notas
                         if (targetId === 'notas-estudiantes-section') {
-                            cargarDatosEditarNotas();
+                            console.log('Cargando datos de edición de notas...');
+                            // Solo llama a cargarDatosEditarNotas si Supabase está inicializado
+                            if (supabase) {
+                                cargarDatosEditarNotas();
+                            } else {
+                                console.error('Supabase no está inicializado, no se pueden cargar las notas de estudiantes.');
+                            }
                         }
+                    } else {
+                        console.error('ERROR: Sección objetivo NO encontrada para ID:', targetId);
                     }
                 });
             });
@@ -457,7 +491,7 @@
             }
 
 
-            // --- Lógica de Recordatorios (anteriormente en profesor.js, ahora integrada) ---
+            // --- Lógica de Recordatorios (integrada) ---
             const formRecordatorio = document.getElementById("form-recordatorio");
             const listaRecordatorios = document.getElementById("lista-recordatorios");
 
@@ -466,6 +500,10 @@
              * @returns {Array} Un array de objetos recordatorio.
              */
             async function obtenerRecordatoriosDesdeSupabase() {
+              if (!supabase) { // Asegura que Supabase esté inicializado
+                  console.error('Supabase no está inicializado para obtener recordatorios.');
+                  return [];
+              }
               const { data, error } = await supabase
                 .from('recordatorios')
                 .select('*')
@@ -488,7 +526,11 @@
              * @returns {Object|null} El objeto del recordatorio insertado o null si hay un error.
              */
             async function guardarRecordatorioEnSupabase(materia, fecha, descripcion) {
-              const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+              if (!supabase) { // Asegura que Supabase esté inicializado
+                  console.error('Supabase no está inicializado para guardar recordatorios.');
+                  return null;
+              }
+              const currentUserData = JSON.parse(localStorage.getItem("currentUser"));
               const profesorCodigo = currentUserData ? currentUserData.codigo_profesor : null;
 
               if (!profesorCodigo) {
@@ -521,7 +563,11 @@
              * @param {string} recordatorioId - El ID único (UUID) del recordatorio a eliminar.
              */
             async function eliminarRecordatorioDesdeSupabase(recordatorioId) {
-              const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+              if (!supabase) { // Asegura que Supabase esté inicializado
+                  console.error('Supabase no está inicializado para eliminar recordatorios.');
+                  return;
+              }
+              const currentUserData = JSON.parse(localStorage.getItem("currentUser"));
               const profesorCodigo = currentUserData ? currentUserData.codigo_profesor : null;
 
               if (!profesorCodigo) {
@@ -562,32 +608,34 @@
             async function mostrarRecordatorios() {
                 const recordatorios = await obtenerRecordatoriosDesdeSupabase();
 
-                if (recordatorios.length === 0) {
-                    listaRecordatorios.innerHTML = "<p class='text-gray-600'>No hay recordatorios guardados.</p>";
-                    return;
-                }
+                if (listaRecordatorios) { // Asegura que el elemento exista
+                    if (recordatorios.length === 0) {
+                        listaRecordatorios.innerHTML = "<p class='text-gray-600'>No hay recordatorios guardados.</p>";
+                        return;
+                    }
 
-                listaRecordatorios.innerHTML = "";
-                recordatorios.forEach((r) => {
-                    const div = document.createElement("div");
-                    div.className = "recordatorio-item";
-                    div.innerHTML = `
-                        <div>
-                            <p class="font-bold text-gray-800">Materia: <span class="text-indigo-700">${r.materia}</span></p>
-                            <p class="text-sm text-gray-600">Fecha: <span class="font-medium text-purple-500">${r.fecha}</span></p>
-                            <p class="text-sm text-gray-700 mt-1">Descripción: ${r.descripcion}</p>
-                        </div>
-                        <button data-id="${r.id}">Eliminar</button>
-                    `;
-                    listaRecordatorios.appendChild(div);
-                });
-
-                listaRecordatorios.querySelectorAll("button[data-id]").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        const recordatorioId = e.target.getAttribute("data-id");
-                        eliminarRecordatorioDesdeSupabase(recordatorioId);
+                    listaRecordatorios.innerHTML = "";
+                    recordatorios.forEach((r) => {
+                        const div = document.createElement("div");
+                        div.className = "recordatorio-item";
+                        div.innerHTML = `
+                            <div>
+                                <p class="font-bold text-gray-800">Materia: <span class="text-indigo-700">${r.materia}</span></p>
+                                <p class="text-sm text-gray-600">Fecha: <span class="font-medium text-purple-500">${r.fecha}</span></p>
+                                <p class="text-sm text-gray-700 mt-1">Descripción: ${r.descripcion}</p>
+                            </div>
+                            <button data-id="${r.id}">Eliminar</button>
+                        `;
+                        listaRecordatorios.appendChild(div);
                     });
-                });
+
+                    listaRecordatorios.querySelectorAll("button[data-id]").forEach(btn => {
+                        btn.addEventListener("click", (e) => {
+                            const recordatorioId = e.target.getAttribute("data-id");
+                            eliminarRecordatorioDesdeSupabase(recordatorioId);
+                        });
+                    });
+                }
             }
 
             // Manejar el envío del formulario para guardar un nuevo recordatorio
@@ -619,52 +667,68 @@
             const nuevaNotaInput = document.getElementById('nuevaNota');
 
             async function cargarDatosEditarNotas() {
+                if (!supabase) { // Asegura que Supabase esté inicializado
+                    console.error('Supabase no está inicializado para cargar datos de notas.');
+                    return;
+                }
                 try {
                     const { data: estudiantes, error: errEst } = await supabase
                       .from('estudiantes')
                       .select('id, nombre, correo');
                     if (errEst) throw errEst;
 
-                    selectEstudiante.innerHTML = '<option value="" disabled selected>Seleccione un estudiante</option>';
-                    estudiantes.forEach(est => {
-                      const option = document.createElement('option');
-                      option.value = est.id;
-                      option.textContent = est.nombre;
-                      selectEstudiante.appendChild(option);
-                    });
+                    if (selectEstudiante) { // Asegura que el elemento exista
+                        selectEstudiante.innerHTML = '<option value="" disabled selected>Seleccione un estudiante</option>';
+                        estudiantes.forEach(est => {
+                          const option = document.createElement('option');
+                          option.value = est.id;
+                          option.textContent = est.nombre;
+                          selectEstudiante.appendChild(option);
+                        });
+                    }
+
 
                     const { data: materias, error: errMat } = await supabase
                       .from('materias')
                       .select('id, nombre');
                     if (errMat) throw errMat;
 
-                    selectAsignatura.innerHTML = '<option value="" disabled selected>Seleccione una asignatura</option>';
-                    materias.forEach(mat => {
-                      const option = document.createElement('option');
-                      option.value = mat.id;
-                      option.textContent = mat.nombre;
-                      selectAsignatura.appendChild(option);
-                    });
+                    if (selectAsignatura) { // Asegura que el elemento exista
+                        selectAsignatura.innerHTML = '<option value="" disabled selected>Seleccione una asignatura</option>';
+                        materias.forEach(mat => {
+                          const option = document.createElement('option');
+                          option.value = mat.id;
+                          option.textContent = mat.nombre;
+                          selectAsignatura.appendChild(option);
+                        });
+                    }
 
                 } catch (error) {
-                    mensajeNotas.textContent = 'Error al cargar estudiantes o materias: ' + error.message;
+                    if (mensajeNotas) { // Asegura que el elemento exista
+                        mensajeNotas.textContent = 'Error al cargar estudiantes o materias: ' + error.message;
+                    }
                 }
             }
 
             if (btnActualizar) {
                 btnActualizar.addEventListener('click', async () => {
+                    if (!supabase) { // Asegura que Supabase esté inicializado
+                        console.error('Supabase no está inicializado para actualizar notas.');
+                        if (mensajeNotas) mensajeNotas.textContent = 'Error: Conexión a la base de datos no disponible.';
+                        return;
+                    }
                     const estudianteId = selectEstudiante.value;
                     const materiaId = selectAsignatura.value;
                     const nuevaNota = nuevaNotaInput.value.trim().toUpperCase();
 
                     if (!estudianteId || !materiaId || !nuevaNota) {
-                      mensajeNotas.textContent = 'Por favor, complete todos los campos.';
+                      if (mensajeNotas) mensajeNotas.textContent = 'Por favor, complete todos los campos.';
                       return;
                     }
 
                     const notasValidas = ['DBJ', 'DB', 'DA', 'DS'];
                     if (!notasValidas.includes(nuevaNota)) {
-                      mensajeNotas.textContent = 'La nota debe ser DBJ, DB, DA o DS.';
+                      if (mensajeNotas) mensajeNotas.textContent = 'La nota debe ser DBJ, DB, DA o DS.';
                       return;
                     }
 
@@ -676,7 +740,7 @@
                         .eq('materia_id', materiaId)
                         .single();
 
-                      if (errBuscar && errBuscar.code !== 'PGRST116') {
+                      if (errBuscar && errBuscar.code !== 'PGRST116') { // PGRST116 es "No rows found"
                         throw errBuscar;
                       }
 
@@ -687,20 +751,20 @@
                           .eq('id', notaExistente.id);
                         if (errActualizar) throw errActualizar;
 
-                        mensajeNotas.textContent = 'Nota actualizada correctamente.';
+                        if (mensajeNotas) mensajeNotas.textContent = 'Nota actualizada correctamente.';
                       } else {
                         const { error: errInsertar } = await supabase
                           .from('notas')
                           .insert([{ estudiante_id: estudianteId, materia_id: materiaId, nota: nuevaNota }]);
                         if (errInsertar) throw errInsertar;
 
-                        mensajeNotas.textContent = 'Nota agregada correctamente.';
+                        if (mensajeNotas) mensajeNotas.textContent = 'Nota agregada correctamente.';
                       }
 
-                      setTimeout(() => (mensajeNotas.textContent = ''), 4000);
+                      setTimeout(() => { if (mensajeNotas) mensajeNotas.textContent = ''; }, 4000);
 
                     } catch (error) {
-                      mensajeNotas.textContent = 'Error al actualizar nota: ' + error.message;
+                      if (mensajeNotas) mensajeNotas.textContent = 'Error al actualizar nota: ' + error.message;
                     }
                 });
             }
@@ -709,13 +773,15 @@
             const observer = new MutationObserver((mutationsList) => {
                 for (const mutation of mutationsList) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        if (notasEstudiantesSection.classList.contains('active')) {
+                        if (notasEstudiantesSection && notasEstudiantesSection.classList.contains('active')) {
                             cargarDatosEditarNotas();
                         }
                     }
                 }
             });
-            observer.observe(notasEstudiantesSection, { attributes: true });
+            if (notasEstudiantesSection) { // Asegura que el elemento exista antes de observar
+                observer.observe(notasEstudiantesSection, { attributes: true });
+            }
 
 
             // --- Lógica de Cerrar Sesión (EXISTENTE) ---
