@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacta con EduConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e6eef5; /* Light blue-grey background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container-wrapper {
+            background-color: #ffffff; /* White background for the main content area */
+            border-radius: 1.5rem; /* Rounded corners for the container */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08); /* Soft shadow */
+            width: 100%;
+            max-width: 1200px; /* Max width to match typical desktop layouts */
+            overflow: hidden; /* Ensures rounded corners are respected */
+            padding: 2.5rem 3.5rem; /* Adjusted padding */
+            position: relative; /* For absolute positioning of elements */
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem; /* Space below header */
+        }
+        .main-content-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding-bottom: 2rem; /* Space for the bottom line */
+        }
+        .left-text-content {
+            max-width: 45%; /* Adjust width to match image */
+            z-index: 10; /* Ensure text is above illustration */
+        }
+        .right-illustration-area {
+            position: relative;
+            width: 55%; /* Adjust width to match image */
+            height: 400px; /* Fixed height for illustration area */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* Placeholder for the main illustration */
+        .main-illustration {
+            width: 100%;
+            height: 100%;
+            background-image: url('atencion-al-cliente-png'); /* Placeholder for main illustration */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+        }
+        /* Small floating elements */
+        .floating-element {
+            position: absolute;
+            background-color: #e0f2fe; /* Light blue */
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .floating-element-1 { /* Phone icon */
+            top: 20%;
+            left: 10%;
+            background-color: #90caf9; /* Blue */
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .floating-element-2 { /* Location icon */
+            top: 5%;
+            right: 15%;
+            background-color: #ef9a9a; /* Red */
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .floating-element-3 { /* Message icon */
+            bottom: 20%;
+            right: 5%;
+            background-color: #a5d6a7; /* Green */
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .bottom-line {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background-color: #e0e0e0;
+            border-radius: 1px;
+        }
+        .learn-more-button {
+            background-color: #7C3AED; 
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .learn-more-button:hover {
+            background-color: #6c00fa; /* Darker indigo on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-wrapper">
+        <!-- Header Section -->
+        <header class="header-section">
+            <div class="flex items-center space-x-2">
+                <div class="w-4 h-4 bg-purple-600 rounded-full"></div> <!-- Blue circle for logo -->
+                <div class="text-gray-800 font-bold text-xl">EduConnect</div>
+            </div>
+            <nav>
+                <ul class="flex space-x-8 text-gray-600 font-medium">
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main Content Section -->
+        <div class="main-content-area">
+            <!-- Left Text Content -->
+            <div class="left-text-content">
+                <h2 class="text-6xl font-extrabold text-gray-900 mb-4 leading-tight">CONTACTA<br>CON NOSOTROS</h2>
+                <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                    Contacta con el equipo de EduConnect para resolver tus dudas o informar un problema. El equipo se contactará contigo lo más rápido posible brindando una solución a tu problema o inquietud.
+                </p>
+                <button id="learn-more-button" class="learn-more-button">Contactar</button>
+            </div>
+
+            <!-- Right Illustration Area -->
+            <div class="right-illustration-area">
+                <!-- Main Illustration Placeholder -->
+                <img src="atencion-al-cliente.png" alt="Main Illustration" class="main-illustration">
+
+                <!-- Floating Elements (Icons/Shapes) -->
+                <div class="floating-element floating-element-1">
+                    <!-- Placeholder for phone icon -->
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                </div>
+                <div class="floating-element floating-element-2">
+                    <!-- Placeholder for location icon -->
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="floating-element floating-element-3">
+                    <!-- Placeholder for message icon -->
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.001 0 01-4.701-1.23l-3.2 1.6a1 1 0 01-1.32-.958l.6-3a1 1 0 01.29-.62l-2.5-2.5a1 1 0 010-1.414l2.5-2.5a1 1 0 011.414 0l2.5 2.5a1 1 0 01.62.29l3-0.6a1 1 0 01.958 1.32l-1.6 3.2A8.841 8.001 0 0110 18c4.418 0 8-3.134 8-7z" clip-rule="evenodd"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <div class="bottom-line"></div>
+
+        <!-- Footer / Designed by section -->
+        <div class="text-center text-gray-500 text-sm mt-8">
+            @EduConnect 2025. Todos los derechos reservados.
+        </div>
+    </div>
+
+<script>
+    const learnmorebutton = document.getElementById('learn-more-button');
+        learnmorebutton.addEventListener('click', () => {
+            
+            window.location.href = "ayuda-form.html"
+        });
+
+</script>
+
+</body>
+</html>

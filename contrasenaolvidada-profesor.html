@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olvidaste tu Contraseña</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a clean, modern look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2f7, #ffffff); /* Light blue gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Add some padding for smaller screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        .card-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow */
+            padding: 50px 40px;
+            max-width: 550px; /* Slightly wider card */
+            width: 100%; /* Full width on smaller screens */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px; /* Space between elements */
+        }
+        .title {
+            color: #2c3e50; /* Darker text for titles */
+            font-size: 2.5rem; /* Larger title */
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .description {
+            color: #555; /* Medium gray for description */
+            font-size: 1.15rem; /* Slightly larger description text */
+            line-height: 1.6;
+            margin-bottom: 15px; /* Space before the button */
+        }
+        .btn-back {
+            background: linear-gradient(90deg, #4c51bf, #6b46c1); /* Blue to green gradient */
+            color: white;
+            padding: 14px 35px; /* More generous padding */
+            border-radius: 12px; /* More rounded corners */
+            font-weight: 600;
+            font-size: 1.1rem; /* Larger button text */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: inline-block;
+            text-decoration: none; /* Remove underline from link */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Button shadow */
+        }
+        .btn-back:hover {
+            transform: translateY(-3px); /* Lift effect on hover */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .card-container {
+                padding: 30px 20px;
+                border-radius: 15px;
+            }
+            .title {
+                font-size: 2rem;
+            }
+            .description {
+                font-size: 1rem;
+            }
+            .btn-back {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <h1 class="title">¿Olvidaste tu contraseña?</h1>
+        <p class="description">Por favor, infórmale a soporte que tu contraseña fue olvidada, te generaremos otra de inmediato.</p>
+        <p>matiasyosa@gmail.com</p>
+        <a href="login-profesores.html" class="btn-back">Regresar</a>
+    </div>
+</body>
+</html>

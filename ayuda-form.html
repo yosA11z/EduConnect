@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contáctanos - EduConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #DCE2F4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .main-wrapper {
+      display: flex;
+      background-color: #ffffff;
+      border-radius: 1.5rem;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 1000px;
+      overflow: hidden;
+    }
+    .left-illustration-section {
+      position: relative;
+      flex: 1;
+      background-color: #7C3AED;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 500px;
+    }
+    .main-illustration-img {
+      width: 80%;
+      height: auto;
+      max-width: 400px;
+      position: relative;
+      z-index: 2;
+    }
+    .speech-bubble {
+      position: absolute;
+      background-color: #FFFFFF;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      color: #4A5568;
+    }
+    .speech-bubble-1 {
+      top: 15%;
+      left: 10%;
+      width: 100px;
+      height: 60px;
+      border-bottom-left-radius: 0;
+      transform: rotate(-5deg);
+    }
+    .speech-bubble-2 {
+      top: 25%;
+      right: 5%;
+      width: 120px;
+      height: 70px;
+      border-top-right-radius: 0;
+      transform: rotate(10deg);
+    }
+    .heart-icon {
+      position: absolute;
+      top: 35%;
+      left: 20%;
+      color: #EF5350;
+      font-size: 2.5rem;
+      z-index: 1;
+    }
+    .envelope-icon {
+      position: absolute;
+      bottom: 20%;
+      right: 10%;
+      color: #FFD54F;
+      font-size: 3rem;
+      z-index: 1;
+    }
+    .right-form-section {
+      flex: 1;
+      background-color: white;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .form-title {
+      color: #000000;
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+    .form-input {
+      width: 100%;
+      background-color: #FFFFFF;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #000000;
+      border: none;
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .submit-button {
+      background-color: #7C3AED;
+      color: #FFFFFF;
+      font-weight: 600;
+      padding: 1rem 2.5rem;
+      border-radius: 0.75rem;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .submit-button:hover {
+      background-color: #6c00fa;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #38a169;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      z-index: 999;
+      font-weight: 600;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <div class="left-illustration-section">
+      <img src="soporte-cliente-2.png" alt="Hombre trabajando en laptop" class="main-illustration-img"/>
+      <div class="speech-bubble speech-bubble-1">
+        <svg class="w-5 h-5 mr-1 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.001 0 01-4.701-1.23l-3.2 1.6a1 1 0 01-1.32-.958l.6-3a1 1 0 01.29-.62l-2.5-2.5a1 1 0 010-1.414l2.5-2.5a1 1 0 011.414 0l2.5 2.5a1 1 0 01.62.29l3-0.6a1 1 0 01.958 1.32l-1.6 3.2A8.841 8.001 0 0110 18c4.418 0 8-3.134 8-7z" clip-rule="evenodd"/></svg>
+        <span>Hola!</span>
+      </div>
+      <div class="speech-bubble speech-bubble-2">
+        <svg class="w-5 h-5 mr-1 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.001 0 01-4.701-1.23l-3.2 1.6a1 1 0 01-1.32-.958l.6-3a1 1 0 01.29-.62l-2.5-2.5a1 1 0 010-1.414l2.5-2.5a1 1 0 011.414 0l2.5 2.5a1 1 0 01.62.29l3-0.6a1 1 0 01.958 1.32l-1.6 3.2A8.841 8.001 0 0110 18c4.418 0 8-3.134 8-7z" clip-rule="evenodd"/></svg>
+        <span>Ayuda?</span>
+      </div>
+      <i class="fas fa-heart heart-icon"></i>
+      <i class="fas fa-envelope envelope-icon"></i>
+    </div>
+
+    <div class="right-form-section">
+      <h2 class="form-title">CONTÁCTANOS</h2>
+      <form class="w-full" action="https://formspree.io/f/mpwlaabz" method="POST" id="contact-form">
+        <input type="text" name="nombre" placeholder="Nombre" class="form-input" required>
+        <input type="email" name="email" placeholder="Correo Electrónico" class="form-input" required>
+        <textarea name="mensaje" placeholder="Descríbenos tu problema" class="form-input form-textarea" required></textarea>
+        <button type="submit" class="submit-button">ENVIAR</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">¡Mensaje enviado correctamente!</div>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const toast = document.getElementById('toast');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      const action = form.getAttribute('action');
+
+      const res = await fetch(action, {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast.classList.add('show');
+        form.reset();
+        setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+    });
+  </script>
+
+</body>
+</html>
