@@ -561,6 +561,11 @@
                 return null;
               }
 
+              // --- Debugging adicional para INSERT ---
+              console.log('Intentando insertar recordatorio con profesor_creador_codigo:', profesorCodigo);
+              console.log('Datos a insertar:', { materia, fecha, descripcion, profesor_creador_codigo: profesorCodigo });
+              // --- Fin de Debugging ---
+
               const { data, error } = await supabase
                 .from('recordatorios')
                 .insert({
