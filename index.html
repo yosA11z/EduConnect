@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargando...</title>
+    <!-- Tailwind CSS CDN for basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for the writing animation */
+        :root {
+            --primary-bg: #4c51bf; /* Indigo-700 */
+            --secondary-bg: #6b46c1; /* Purple-700 */
+            --book-color: #ffffff;
+            --page-color: #f0f0f0;
+            --ink-color: #333333;
+            --pencil-color: #f7d08a; /* Light wood color */
+            --eraser-color: #ff9999;
+            --accent-color: #3498db; /* Blue accent */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to right, var(--primary-bg), var(--secondary-bg));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Contenedor principal para la animación */
+        .loading-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 300px; /* Ancho de la escena */
+            height: 250px; /* Altura de la escena */
+            perspective: 1000px; /* For 3D effect on book */
+        }
+
+        /* Libro */
+        .book {
+            width: 250px;
+            height: 180px;
+            background-color: var(--book-color);
+            border-radius: 8px; /* Slightly more rounded */
+            position: absolute;
+            bottom: 0;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+            transform-origin: bottom center;
+            transform: rotateX(15deg) translateY(10px); /* More pronounced tilt and slight lift */
+            animation: book-float 4s ease-in-out infinite alternate; /* Gentle floating animation */
+        }
+
+        @keyframes book-float {
+            0% { transform: rotateX(15deg) translateY(10px); }
+            100% { transform: rotateX(15deg) translateY(0px); }
+        }
+
+        /* Páginas del libro */
+        .book::before {
+            content: '';
+            position: absolute;
+            top: 8px; /* Increased padding */
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: var(--page-color);
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1); /* Inner shadow for pages */
+        }
+
+        /* Líneas de escritura simuladas */
+        .writing-lines {
+            position: absolute;
+            left: 20px;
+            width: 0; /* Empieza sin ancho */
+            height: 2px;
+            background-color: var(--ink-color);
+            animation: write-line 2s linear infinite;
+            opacity: 0.8;
+            border-radius: 1px; /* Soft edges for lines */
+        }
+
+        /* Adjusted top positions and delays for better sync with pencil */
+        /* The top values here are relative to the .book container. */
+        /* The pencil's Y position will be calculated to align its tip with these lines. */
+        .writing-lines:nth-child(1) { top: 30px; animation-delay: 0.0s; }
+        .writing-lines:nth-child(2) { top: 55px; animation-delay: 1.0s; }
+        .writing-lines:nth-child(3) { top: 80px; animation-delay: 2.0s; }
+        .writing-lines:nth-child(4) { top: 105px; animation-delay: 3.0s; }
+
+        @keyframes write-line {
+            0% { width: 0; opacity: 0; }
+            20% { opacity: 1; } /* Appear quickly */
+            80% { width: calc(100% - 40px); opacity: 1; }
+            100% { width: calc(100% - 40px); opacity: 0; } /* Fade out */
+        }
+
+        /* Lápiz */
+        .pencil {
+            width: 120px;
+            height: 15px;
+            background-color: var(--pencil-color);
+            border-radius: 7px; /* More rounded pencil body */
+            position: absolute;
+            /* Transform origin is now at the tip for easier alignment */
+            transform-origin: 0% 50%;
+            animation: write-pencil 4s linear infinite; /* Increased duration to cover 4 lines */
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.25);
+            z-index: 1; /* Ensure pencil is above lines */
+        }
+
+        /* Punta del lápiz */
+        .pencil::before {
+            content: '';
+            position: absolute;
+            /* Adjusted for new transform-origin */
+            left: -15px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 7.5px solid transparent;
+            border-bottom: 7.5px solid transparent;
+            border-right: 15px solid var(--pencil-color);
+        }
+
+        /* Mina del lápiz */
+        .pencil::after {
+            content: '';
+            position: absolute;
+            /* Adjusted for new transform-origin */
+            left: -12px; /* Position relative to pencil tip */
+            top: 5.5px; /* Vertically center on pencil tip */
+            width: 0;
+            height: 0;
+            border-top: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            border-right: 8px solid var(--ink-color); /* Darker tip */
+        }
+
+        /* Goma de borrar */
+        .pencil .eraser {
+            position: absolute;
+            right: 0;
+            top: 2.5px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--eraser-color);
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .pencil .metal-band {
+            position: absolute;
+            right: 10px;
+            top: 2.5px;
+            width: 5px;
+            height: 10px;
+            background-color: #b0b0b0; /* Metal color */
+            border-radius: 1px;
+        }
+
+        @keyframes write-pencil {
+            /* The pencil's tip (mina) is at `left: -12px` relative to its own container. */
+            /* The pencil itself is 120px wide. */
+            /* The .book is 250px wide. Its left edge is at 0. */
+            /* The .writing-lines start at `left: 20px` inside the .book. */
+            /* So, the pencil's tip should align with `left: 20px` of the book. */
+            /* If the pencil's transform-origin is 0% 50% (its left end), */
+            /* then its `translateX` needs to be `20px` (book's left offset) + `12px` (mina offset) = 32px. */
+            /* The Y position needs to align with the `top` of the writing lines. */
+            /* The mina's top is 5.5px from the pencil's top edge. */
+            /* So, pencil's `translateY` = `line_top_position` - `pencil_height/2` + `mina_top_offset` */
+            /* pencil_height/2 = 15px / 2 = 7.5px */
+            /* mina_top_offset = 5.5px */
+            /* So, pencil's `translateY` = `line_top_position` - 7.5px + 5.5px = `line_top_position` - 2px */
+
+            /* Adjusted for starting even more left and down */
+            /* Line 1: top 30px -> pencil translateY = 30px - 2px = 28px. New Y: 28px + 80px = 108px */
+            /* Line 1: New X: 32px - 90px = -58px */
+            0% { transform: translate(-28px, 108px) rotate(0deg); } /* Moved right by 30px from -58px */
+            15% { transform: translate(150px, 108px) rotate(5deg); } /* Moved right by 30px from 120px */
+
+            /* Line 2: top 55px -> pencil translateY = 55px - 2px = 53px. New Y: 53px + 80px = 133px */
+            25% { transform: translate(-28px, 133px) rotate(-5deg); } /* Moved right by 30px from -58px */
+            40% { transform: translate(150px, 133px) rotate(0deg); } /* Moved right by 30px from 120px */
+
+            /* Line 3: top 80px -> pencil translateY = 80px - 2px = 78px. New Y: 78px + 80px = 158px */
+            50% { transform: translate(-28px, 158px) rotate(5deg); } /* Moved right by 30px from -58px */
+            65% { transform: translate(150px, 158px) rotate(-5deg); } /* Moved right by 30px from 120px */
+
+            /* Line 4: top 105px -> pencil translateY = 105px - 2px = 103px. New Y: 103px + 80px = 183px */
+            75% { transform: translate(-28px, 183px) rotate(0deg); } /* Moved right by 30px from -58px */
+            90% { transform: translate(150px, 183px) rotate(5deg); } /* Moved right by 30px from 120px */
+
+            /* Smoothly move back to start position for seamless loop */
+            95% { transform: translate(-28px, 108px) rotate(0deg); opacity: 1; } /* Return to start, visible */
+            100% { transform: translate(-28px, 108px) rotate(0deg); opacity: 0; } /* Briefly fade out at very end for clean loop */
+        }
+
+        /* Texto "Cargando..." */
+        .loading-text {
+            font-size: 2.8em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 30px;
+            opacity: 0.9;
+            animation: text-pulse 3s infinite ease-in-out alternate; /* Smoother pulse */
+            color: var(--book-color); /* White text */
+        }
+
+        .sub-text {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes text-pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-700 to-purple-700 flex flex-col items-center justify-center min-h-screen">
+    <div class="loading-wrapper">
+        <div class="book">
+            <div class="writing-lines"></div>
+            <div class="writing-lines"></div>
+            <div class="writing-lines"></div>
+            <div class="writing-lines"></div>
+        </div>
+        <div class="pencil">
+            <div class="metal-band"></div>
+            <div class="eraser"></div>
+        </div>
+    </div>
+    <div class="loading-text">Cargando...</div>
+    <div class="sub-text">Preparando tu contenido.</div>
+
+    <script>
+        // Redirige después de 3 segundos
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(function() {
+                window.location.href = 'bienvenida.html';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

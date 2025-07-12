@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Profesores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            max-width: 900px;
+            width: 95%;
+        }
+        .left-panel {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+        .right-panel {
+            background: linear-gradient(135deg, #4c51bf, #6b46c1);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            flex: 1;
+        }
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus {
+            border-color: #2196F3;
+        }
+        .input-group svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0a0a0;
+        }
+        .input-group .eye-icon {
+            left: auto;
+            right: 12px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #4c51bf, #6b46c1);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+            width: 100%;
+            cursor: pointer; /* Añadido para indicar que es un botón interactivo */
+            border: none; /* Asegura que no tenga borde por defecto */
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .link {
+            color: #2196F3;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .link:hover {
+            color: #1a73e8;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+            .left-panel, .right-panel {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="left-panel">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-2">¡Hola, profesor!</h2>
+            <p class="text-gray-600 mb-8">Inicia sesión con tus credenciales</p>
+
+            <form id="login-form" class="w-full"> <div class="input-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.5v-1.5" />
+                    </svg>
+                    <input type="text" id="codigo" placeholder="Código de profesor" class="rounded-xl">
+                </div>
+
+                <div class="input-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <input type="password" id="contraseña" placeholder="Contraseña" class="rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 eye-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+
+                <div class="flex justify-between items-center w-full mb-6 text-sm">
+                    <a href="#" class="link">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" id="login-button" class="btn-primary mb-4">INICIAR SESIÓN</button>
+            </form>
+
+            <p class="text-sm text-gray-600">
+                ¿No eres profesor? <a href="login-estudiantes.html" class="link font-semibold">Inicia sesión como estudiante aquí.</a>
+            </p>
+
+        </div>
+
+        <div class="right-panel">
+            <h2 class="text-3xl font-semibold mb-4">Bienvenido a Educonnect!</h2>
+            <p class="text-lg leading-relaxed">Tu plataforma favorita para darle seguimiento a tus estudiantes en sus notas. Fácil, practico, eficaz.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("loginProfesor.js cargado (ahora incrustado)"); // Mensaje para depuración
+
+            // Configuración Supabase
+            const supabaseUrl = "https://aamvnpvfzmnrrfurovuv.supabase.co";
+            const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbXZucHZmem1ucnJmdXJvdnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNjI2NDUsImV4cCI6MjA2MzYzODY0NX0._OigReH-zPR9AfGE5L9Rw9H71AnxQzH7T5k93mjPj5E";
+
+            // Aquí usamos la función global "createClient" que la librería define en window.supabase
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+            const loginForm = document.querySelector("#login-form");
+
+            if (loginForm) {
+                loginForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+
+                    const codigo = document.querySelector("#codigo").value.trim();
+                    const password = document.querySelector("#contraseña").value;
+
+                    if (!codigo || !password) {
+                        alert("Por favor ingresa código y contraseña.");
+                        return;
+                    }
+
+                    console.log("Intentando iniciar sesión profesor con:", { codigo, password });
+
+                    try {
+                        // Consultar en la tabla 'profesores' en Supabase (ajusta el nombre de la tabla)
+                        const { data, error } = await supabase
+                            .from("profesores")
+                            .select("*")
+                            .eq("codigo_profesor", codigo)
+                            .limit(1)
+                            .single();
+
+                        if (error) {
+                            console.error("Error al consultar la base de datos:", error);
+                            alert("Error al iniciar sesión. Inténtalo más tarde.");
+                            return;
+                        }
+
+                        if (!data) {
+                            alert("Código o contraseña incorrectos.");
+                            return;
+                        }
+
+                        // Suponemos que la contraseña está guardada en texto plano (mejor usar hash en producción)
+                        if (data.contrasena === password) {
+                            alert(`Bienvenido ${data.nombre}`);
+
+                            localStorage.setItem("currentUser", JSON.stringify(data));
+                            localStorage.setItem("userRole", "profesor");
+                            localStorage.setItem("userName", data.nombre);
+
+                            window.location.href = "landing-profesores.html"; // Redirige a profesor.html (o el dashboard del profesor)
+                        } else {
+                            alert("Código o contraseña incorrectos.");
+                        }
+                    } catch (err) {
+                        console.error("Error al iniciar sesión profesor:", err);
+                        alert("Ocurrió un error al iniciar sesión.");
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
