@@ -388,6 +388,28 @@
                 console.log('Intentando inicializar Supabase con KEY (primeros 5 chars):', SUPABASE_ANON_KEY.substring(0, 5) + '...');
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 console.log('Supabase inicializado con éxito.');
+
+                // --- NUEVA PRUEBA DE CONEXIÓN BÁSICA ---
+                // Esta prueba intentará leer un solo 'id' de la tabla 'recordatorios'.
+                // Si falla con 401, el problema es en las políticas de RLS para SELECT.
+                (async () => {
+                    try {
+                        const { data, error } = await supabase.from('recordatorios').select('id').limit(1);
+                        if (error) {
+                            console.error('ERROR en prueba de conexión básica (SELECT):', error);
+                            // Si el error es 401, sugiere que la política 'SELECT' no está permitiendo el acceso.
+                            if (error.code === '401') {
+                                console.error('Posible problema de RLS: La política de SELECT podría no permitir el acceso con la clave anónima.');
+                            }
+                        } else {
+                            console.log('Prueba de conexión básica (SELECT) exitosa. Datos:', data);
+                        }
+                    } catch (e) {
+                        console.error('ERROR inesperado en prueba de conexión básica (SELECT):', e);
+                    }
+                })();
+                // --- FIN DE PRUEBA ---
+
             } catch (e) {
                 console.error('ERROR: Fallo al inicializar Supabase. Verifica tu URL y clave.', e);
                 alert('Hubo un problema al conectar con la base de datos. Por favor, verifica la configuración.');
