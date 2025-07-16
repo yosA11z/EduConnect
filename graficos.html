@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard de Notas Personalizado</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      background-color: #ffffff;
+      line-height: 1.6;
+    }
+
+    /* Estilos para el Hero */
+    .hero-section {
+        background: linear-gradient(135deg, #9932cc 0%, #d8bfd8 100%); /* Morados */
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        border-bottom-left-radius: 50px; /* Curva suave abajo */
+        border-bottom-right-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        margin-bottom: 3rem; /* Espacio entre el Hero y el dashboard */
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+        font-weight: bold;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* SVG para las formas abstractas */
+    .hero-section .abstract-shape-top {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        width: 100%;
+        height: 250px;
+        fill: rgba(153, 50, 204, 0.3); /* Morado semi-transparente */
+        z-index: 0;
+    }
+    .hero-section .abstract-shape-bottom {
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        fill: rgba(216, 191, 216, 0.3); /* Lila semi-transparente */
+        z-index: 0;
+    }
+
+    /* Estilos del Dashboard */
+    .dashboard {
+        display: grid;
+        grid-template-columns: 1fr; /* Predeterminado para móviles */
+        grid-template-areas:
+            "linea"
+            "barras"
+            "torta"
+            "radar"; /* Nombres de áreas para los gráficos */
+        gap: 2rem;
+        padding: 0 2rem 2rem; /* Padding a los lados y abajo */
+        max-width: 1200px; /* Ancho máximo para el dashboard */
+        margin: 0 auto; /* Centrar el dashboard */
+    }
+
+    @media (min-width: 768px) {
+        .dashboard {
+            grid-template-columns: 2fr 1fr; /* Dos columnas: la primera más ancha */
+            grid-template-areas:
+                "linea barras"
+                "torta radar"; /* Nueva distribución */
+        }
+    }
+
+    /* Asignar áreas a los elementos del grid */
+    #chart-linea { grid-area: linea; }
+    #chart-barras { grid-area: barras; }
+    #chart-torta { grid-area: torta; }
+    #chart-radar { grid-area: radar; }
+
+
+    .chart-box {
+      background-color: #f7f7f7;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      min-height: 250px; /* Aumentado para mejor visualización */
+      display: flex; /* Para centrar el canvas */
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100% !important;
+      max-width: 500px; /* Límite para que no crezcan demasiado */
+      height: auto !important; /* Mantener la proporción */
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .button-link {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #6a0dad; /* Morado oscuro */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    .button-link:hover {
+        background: #4b0082; /* Morado más oscuro al pasar el ratón */
+    }
+
+  </style>
+</head>
+<body>
+
+    <div class="hero-section">
+        <svg class="abstract-shape-top" viewBox="0 0 1000 200" preserveAspectRatio="none">
+            <path d="M0,100 C250,180 750,20 1000,100 L1000,0 L0,0 Z"></path>
+        </svg>
+        <svg class="abstract-shape-bottom" viewBox="0 0 1200 150" preserveAspectRatio="none">
+            <path d="M0,100 C400,150 800,50 1200,100 L1200,150 L0,150 Z"></path>
+        </svg>
+
+        <h1>Tu Dashboard de Notas Personalizado</h1>
+        <p>Visualiza tu progreso académico con gráficos interactivos.</p>
+    </div>
+
+    <div class="dashboard">
+        <div class="chart-box" id="chart-linea"><canvas id="graficoLinea"></canvas></div>
+        <div class="chart-box" id="chart-barras"><canvas id="graficoBarras"></canvas></div>
+        <div class="chart-box" id="chart-torta"><canvas id="graficoTorta"></canvas></div>
+        <div class="chart-box" id="chart-radar"><canvas id="graficoRadar"></canvas></div>
+    </div>
+
+    <div class="button-container">
+        <a class="button-link" onclick="window.location.href='landing-estudiantes.html'">Volver</a>
+    </div>
+
+    <script>
+      const supabaseUrl = "https://aamvnpvfzmnrrfurovuv.supabase.co";
+      const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbXZucHZmem1ucnJmdXJvdnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNjI2NDUsImV4cCI6MjA2MzYzODY0NX0._OigReH-zPR9AfGE5L9Rw9H71AnxQzH7T5k93mjPj5E";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+      const conversionNotas = {
+        "DBJ": 1, // Debajo de lo Básico
+        "DB": 3,  // Básico
+        "DA": 4,  // Alto
+        "DS": 5   // Superior
+      };
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (!currentUser || !currentUser.id) {
+          alert("Debes iniciar sesión.");
+          window.location.href = "login-estudiantes.html";
+          return;
+        }
+
+        try {
+          const { data: notasData, error } = await supabase
+            .from("notas")
+            .select("nota, materias(nombre)")
+            .eq("estudiante_id", currentUser.id);
+
+          if (error) throw error;
+
+          const labels = []; // Nombres de materias
+          const valores = []; // Notas convertidas a números
+          const conteoNotas = { DBJ: 0, DB: 0, DA: 0, DS: 0 }; // Conteo por tipo de nota
+
+          notasData.forEach(n => {
+            const nombreMateria = n.materias?.nombre || "Materia";
+            const nota = n.nota;
+            const valor = conversionNotas[nota] || 0;
+            labels.push(nombreMateria);
+            valores.push(valor);
+            conteoNotas[nota] = (conteoNotas[nota] || 0) + 1;
+          });
+
+          // Colores base de la paleta púrpura/blanco
+          const purplePalette = [
+              '#9932cc', // Amethyst
+              '#ba55d3', // Medium Orchid
+              '#da70d6', // Orchid
+              '#d8bfd8', // Thistle
+              '#8a2be2', // Blue Violet
+              '#6a0dad', // Dark Orchid
+              '#f5edff', // Lavender Blush (casi blanco)
+              '#c7a2d8'  // Un morado intermedio
+          ];
+
+          // --- Gráfico de Líneas (Mantenido y adaptado al layout) ---
+          new Chart(document.getElementById('graficoLinea'), {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [{
+                label: 'Progreso por Materia',
+                data: valores,
+                fill: false,
+                borderColor: '#6a0dad', // Morado oscuro
+                tension: 0.4, // Curvatura más suave
+                pointBackgroundColor: '#9932cc', // Puntos morados
+                pointBorderColor: '#ffffff', // Borde de puntos blanco
+                pointRadius: 5,
+                pointHoverRadius: 7
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      display: true,
+                      labels: { color: '#333' }
+                  },
+                  title: {
+                      display: true,
+                      text: 'Progreso de Notas por Materia',
+                      color: '#333',
+                      font: { size: 16 }
+                  }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  min: 0,
+                  max: 5,
+                  ticks: {
+                    stepSize: 1,
+                    callback: value => ({1:'DBJ',3:'DB',4:'DA',5:'DS'}[value] || '')
+                  },
+                  grid: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  }
+                },
+                x: {
+                  grid: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  }
+                }
+              }
+            }
+          });
+
+          // --- Gráfico de Barras (Ahora Horizontal) ---
+          new Chart(document.getElementById('graficoBarras'), {
+            type: 'bar', // Sigue siendo 'bar', pero la orientación cambia en options
+            data: {
+              labels,
+              datasets: [{
+                label: 'Desempeño Individual',
+                data: valores,
+                backgroundColor: valores.map(v => v <= 1 ? purplePalette[0] : v <= 3 ? purplePalette[1] : v <= 4 ? purplePalette[2] : purplePalette[3]), // Tonos de morado
+                borderColor: '#ffffff',
+                borderWidth: 1,
+                borderRadius: 5
+              }]
+            },
+            options: {
+              indexAxis: 'y', // Hace las barras horizontales
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      display: false
+                  },
+                  title: {
+                      display: true,
+                      text: 'Notas por Materia (Horizontal)',
+                      color: '#333',
+                      font: { size: 16 }
+                  }
+              },
+              scales: {
+                x: { // Antes era 'y', ahora es 'x' para valores
+                  beginAtZero: true,
+                  min: 0,
+                  max: 5,
+                  ticks: {
+                    stepSize: 1,
+                    callback: value => ({1:'DBJ',3:'DB',4:'DA',5:'DS'}[value] || '')
+                  },
+                  grid: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  }
+                },
+                y: { // Antes era 'x', ahora es 'y' para etiquetas (materias)
+                  grid: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  }
+                }
+              }
+            }
+          });
+
+          // --- Gráfico de Torta (Ahora Doughnut) ---
+          new Chart(document.getElementById('graficoTorta'), {
+            type: 'doughnut', // Cambiado a doughnut
+            data: {
+              labels: Object.keys(conteoNotas),
+              datasets: [{
+                data: Object.values(conteoNotas),
+                backgroundColor: ['#9932cc', '#ba55d3', '#da70d6', '#d8bfd8'], // Tonos de morado
+                borderColor: '#ffffff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: { color: '#333' }
+                },
+                title: {
+                      display: true,
+                      text: 'Distribución de Notas',
+                      color: '#333',
+                      font: { size: 16 }
+                }
+              }
+            }
+          });
+
+          // --- Gráfico de Radar (Reemplaza Doble Barra) ---
+          new Chart(document.getElementById('graficoRadar'), {
+            type: 'radar',
+            data: {
+              labels: labels, // Las materias serán los radios
+              datasets: [{
+                label: 'Nota Obtenida',
+                data: valores,
+                backgroundColor: 'rgba(153, 50, 204, 0.4)', // Morado semi-transparente
+                borderColor: '#9932cc', // Borde morado
+                borderWidth: 2,
+                pointBackgroundColor: '#6a0dad',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#6a0dad'
+              }, {
+                  label: 'Nota Esperada (DS)',
+                  data: labels.map(() => 5), // Todas las materias con valor 5
+                  backgroundColor: 'rgba(216, 191, 216, 0.4)', // Lila semi-transparente
+                  borderColor: '#d8bfd8', // Borde lila
+                  borderWidth: 2,
+                  pointBackgroundColor: '#d8bfd8',
+                  pointBorderColor: '#fff',
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: '#d8bfd8'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      labels: { color: '#333' }
+                  },
+                  title: {
+                      display: true,
+                      text: 'Comparativa de Desempeño',
+                      color: '#333',
+                      font: { size: 16 }
+                  }
+              },
+              scales: {
+                r: { // Escala radial para gráficos de radar
+                  beginAtZero: true,
+                  min: 0,
+                  max: 5,
+                  ticks: {
+                    stepSize: 1,
+                    callback: value => ({1:'DBJ',3:'DB',4:'DA',5:'DS'}[value] || ''),
+                    backdropColor: 'transparent', // Para que el texto no tape las líneas
+                    color: '#333'
+                  },
+                  pointLabels: { // Etiquetas de los puntos (materias)
+                      color: '#333',
+                      font: { size: 12 }
+                  },
+                  grid: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  },
+                  angleLines: {
+                      color: 'rgba(0, 0, 0, 0.1)'
+                  }
+                }
+              }
+            }
+          });
+
+        } catch (err) {
+          console.error("Error al cargar datos:", err);
+          alert("Hubo un problema al cargar el dashboard.");
+        }
+      });
+    </script>
+</body>
+</html>
